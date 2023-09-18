@@ -24,7 +24,7 @@ const UserInfo = () => {
       color: "green",
     },
     {
-      id: 1,
+      id: 3,
       icon: <FiUserPlus className="icon" />,
       label: "following",
       value: following,

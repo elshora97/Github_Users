@@ -5,23 +5,36 @@ import { ExampleChart, Pie3D, Column3D, Bar3D, Doughnut2D } from "./Charts";
 const Repos = () => {
   const { repos } = useGlobalContext();
 
-  let languages = repos.reduce((total, item) => {
-    const { language } = item;
+  const languages = repos.reduce((total, item) => {
+    const { language, stargazers_count } = item;
     if (!language) return total;
     if (!total[language]) {
-      total[language] = { label: language, value: 1 };
+      total[language] = { label: language, value: 1, stars: stargazers_count };
     } else {
       total[language] = {
         ...total[language],
         value: total[language].value + 1,
+        stars: total[language].stars + stargazers_count,
       };
     }
     return total;
   }, {});
-  languages = Object.values(languages).sort((a, b) => {
+
+  //Langauges
+  const mostUsedLang = Object.values(languages).sort((a, b) => {
     return b.value - a.value;
   });
-  console.log(languages);
+  console.log(mostUsedLang);
+
+  //Stars
+
+  const mostPopularLang = Object.values(languages)
+    .sort((a, b) => {
+      return b.stars - a.stars;
+    })
+    .map((lang) => {
+      return { ...lang, value: lang.stars };
+    });
 
   const chartData = [
     {
@@ -40,7 +53,10 @@ const Repos = () => {
   return (
     <section className="section">
       <Wrapper className="section-center">
-        <Pie3D data={languages} />
+        <Pie3D data={mostUsedLang} />
+        <div></div>
+        <Doughnut2D data={mostPopularLang} />
+        <div></div>
       </Wrapper>
     </section>
   );
@@ -62,10 +78,11 @@ const Wrapper = styled.div`
     width: 100% !important;
   }
   .fusioncharts-container {
-    width: 100% !important;
+    // width: 100% !important;
   }
   svg {
     width: 100% !important;
+    min-width: 100% !important;
     border-radius: var(--radius) !important;
   }
 `;
