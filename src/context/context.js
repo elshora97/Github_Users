@@ -25,6 +25,13 @@ const GithubProvider = ({ children }) => {
 
     if (response) {
       setGithubUser(response.data);
+      const { login, followers_url } = response.data;
+      axios(`${followers_url}?per_page=100`).then((response) => {
+        setFollowers(response.data);
+      });
+      axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((response) => {
+        setRepos(response.data);
+      });
     } else {
       toggleError(true, "No matching Username");
     }

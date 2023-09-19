@@ -21,9 +21,11 @@ const Repos = () => {
   }, {});
 
   //Langauges
-  const mostUsedLang = Object.values(languages).sort((a, b) => {
-    return b.value - a.value;
-  });
+  const mostUsedLang = Object.values(languages)
+    .sort((a, b) => {
+      return b.value - a.value;
+    })
+    .slice(0, 5);
   console.log(mostUsedLang);
 
   //Stars per lang
@@ -34,8 +36,8 @@ const Repos = () => {
     })
     .map((lang) => {
       return { ...lang, value: lang.stars };
-    });
-
+    })
+    .slice(0, 5);
   //stars and forks
 
   let { stars, forks } = repos.reduce(
