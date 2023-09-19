@@ -16,6 +16,22 @@ const GithubProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({ show: false, msg: "" });
 
+  const serachGithubUser = async (user) => {
+    setLoading(true);
+    toggleError();
+    const response = await axios(`${rootUrl}/users/${user}`).catch((err) =>
+      console.log(err)
+    );
+
+    if (response) {
+      setGithubUser(response.data);
+    } else {
+      toggleError(true, "No matching Username");
+    }
+    checkRequests();
+    setLoading(false);
+  };
+
   const checkRequests = () => {
     axios(`${rootUrl}/rate_limit`)
       .then(({ data }) => {
@@ -37,7 +53,15 @@ const GithubProvider = ({ children }) => {
   useEffect(checkRequests, []);
   return (
     <GithubContext.Provider
-      value={{ githubUser, repos, followers, requests, error }}
+      value={{
+        githubUser,
+        repos,
+        followers,
+        requests,
+        error,
+        serachGithubUser,
+        loading,
+      }}
     >
       {children}
     </GithubContext.Provider>
