@@ -26,12 +26,21 @@ const GithubProvider = ({ children }) => {
     if (response) {
       setGithubUser(response.data);
       const { login, followers_url } = response.data;
-      axios(`${followers_url}?per_page=100`).then((response) => {
-        setFollowers(response.data);
-      });
-      axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((response) => {
-        setRepos(response.data);
-      });
+
+      await Promise.allSettled([
+        axios(`${followers_url}?per_page=100`),
+        axios(`${rootUrl}/users/${login}/repos?per_page=100`),
+      ])
+        .then((result) => {
+          const [followers, repos] = result;
+          if (followers.status === "fulfilled") {
+            setFollowers(followers.value.data);
+          }
+          if (repos.status === "fulfilled") {
+            setRepos(repos.value.data);
+          }
+        })
+        .catch((err) => console.log(err));
     } else {
       toggleError(true, "No matching Username");
     }
